@@ -2,7 +2,7 @@ const crypto = require('node:crypto');
 const fs = require('node:fs');
 const multer = require('multer');
 const express = require('express');
-const { createDocumentController } = require('../controllers/documentController');
+const { createDocumentController } = require('../controllers/document.controller');
 
 function requireOwner(req, res, next) {
   if (!req.get('X-User-Id')?.trim()) {
