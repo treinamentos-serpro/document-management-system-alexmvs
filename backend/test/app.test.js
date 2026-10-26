@@ -40,6 +40,13 @@ test('a API permite enviar, listar e baixar documentos', async () => {
 
     const missingResponse = await fetch(`${baseUrl}/documents/missing/download`);
     assert.equal(missingResponse.status, 404);
+
+    for (let request = 1; request < 59; request += 1) {
+      const response = await fetch(`${baseUrl}/documents/missing/download`);
+      assert.equal(response.status, 404);
+    }
+    const rateLimitedResponse = await fetch(`${baseUrl}/documents/missing/download`);
+    assert.equal(rateLimitedResponse.status, 429);
   } finally {
     await new Promise((resolve) => server.close(resolve));
     for (const filename of await fs.readdir(storage)) {
