@@ -9,6 +9,22 @@ class DocumentError extends Error {
   }
 }
 
+function createDocumentMetadata(file, owner) {
+  return {
+    id: crypto.randomUUID(),
+    originalName: file.originalname,
+    size: file.size,
+    uploadedAt: new Date().toISOString(),
+    owner,
+    mimeType: file.mimetype || null,
+    storageName: file.filename,
+  };
+}
+
+function toPublicDocument({ storageName, ...document }) {
+  return document;
+}
+
 function createDocumentService({ documentRepository, fileRepository }) {
   return {
     async upload({ file, owner }) {
@@ -16,15 +32,7 @@ function createDocumentService({ documentRepository, fileRepository }) {
         throw new DocumentError(400, 'FILE_REQUIRED', 'Selecione um arquivo para enviar.');
       }
 
-      const document = {
-        id: crypto.randomUUID(),
-        originalName: file.originalname,
-        size: file.size,
-        uploadedAt: new Date().toISOString(),
-        owner,
-        mimeType: file.mimetype || null,
-        storageName: file.filename,
-      };
+      const document = createDocumentMetadata(file, owner);
 
       try {
         await documentRepository.save(document);
@@ -33,12 +41,11 @@ function createDocumentService({ documentRepository, fileRepository }) {
         throw error;
       }
 
-      const { storageName, ...publicDocument } = document;
-      return publicDocument;
+      return toPublicDocument(document);
     },
 
     async list(owner) {
-      return (await documentRepository.findByOwner(owner)).map(({ storageName, ...document }) => document);
+      return (await documentRepository.findByOwner(owner)).map(toPublicDocument);
     },
 
     async getDownload({ id, owner }) {
