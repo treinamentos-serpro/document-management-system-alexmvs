@@ -14,12 +14,16 @@ export default function App() {
   const [userId, setUserId] = useState(getInitialUserId);
   const [documents, setDocuments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
 
   useEffect(() => {
     window.localStorage.setItem('dms-user-id', userId);
     let isCurrent = true;
+    setDocuments([]);
+    setError('');
+    setNotice('');
 
     if (!userId.trim()) {
       setDocuments([]);
@@ -30,7 +34,6 @@ export default function App() {
     }
 
     setIsLoading(true);
-    setError('');
     documentService.list(userId.trim())
       .then((result) => {
         if (isCurrent) {
@@ -56,6 +59,7 @@ export default function App() {
   async function handleUpload(file) {
     setError('');
     setNotice('');
+    setIsUploading(true);
     try {
       const document = await documentService.upload(userId.trim(), file);
       setDocuments((currentDocuments) => [document, ...currentDocuments]);
@@ -63,6 +67,8 @@ export default function App() {
     } catch (requestError) {
       setError(requestError.message);
       throw requestError;
+    } finally {
+      setIsUploading(false);
     }
   }
 
@@ -84,6 +90,7 @@ export default function App() {
             value={userId}
             onChange={(event) => setUserId(event.target.value)}
             maxLength={100}
+            disabled={isUploading}
           />
         </label>
       </header>
@@ -105,7 +112,7 @@ export default function App() {
             <h2>Adicionar arquivo</h2>
           </div>
           <UploadComponent
-            disabled={!userId.trim()}
+            disabled={!userId.trim() || isLoading}
             onUpload={handleUpload}
           />
           <p className="local-note"><span aria-hidden="true">●</span> Armazenamento local</p>

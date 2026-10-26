@@ -33,6 +33,7 @@ export function UploadComponent({ disabled, onUpload }) {
         </span>
         <input
           type="file"
+          aria-label="Selecionar documento para envio"
           onChange={(event) => setFile(event.target.files?.[0] || null)}
           disabled={disabled || isUploading}
         />
