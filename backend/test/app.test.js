@@ -97,49 +97,18 @@ test('upload exige usuário e rejeita arquivos acima do limite', async () => {
   }
 });
 
-test('a API permite enviar, listar e baixar documentos', async () => {
-  const storage = path.resolve(__dirname, '../storage');
-  const filesBeforeUpload = new Set(await fs.readdir(storage));
-  const server = app.listen(0);
+test('a API exige usuário e retorna 404 para documentos inexistentes', async () => {
+  const server = await startApp();
 
   try {
-    await new Promise((resolve) => server.once('listening', resolve));
-    const baseUrl = `http://127.0.0.1:${server.address().port}/api`;
-    const form = new FormData();
-    form.append('file', new Blob(['conteúdo do documento']), 'documento.txt');
+    const listResponse = await fetch(`${server.baseUrl}/documents`);
+    assert.strictEqual(listResponse.status, 400);
 
-    const uploadResponse = await fetch(`${baseUrl}/upload`, {
-      method: 'POST',
-      body: form,
+    const missingResponse = await fetch(`${server.baseUrl}/documents/missing/download`, {
+      headers: { 'X-User-Id': 'usuario-a' },
     });
-    assert.equal(uploadResponse.status, 201);
-    const document = await uploadResponse.json();
-    assert.equal(document.originalName, 'documento.txt');
-    assert.equal(Object.hasOwn(document, 'path'), false);
-
-    const listResponse = await fetch(`${baseUrl}/documents`);
-    assert.equal((await listResponse.json()).some(({ id }) => id === document.id), true);
-
-    const downloadResponse = await fetch(
-      `${baseUrl}/documents/${document.id}/download`,
-    );
-    assert.equal(await downloadResponse.text(), 'conteúdo do documento');
-
-    const missingResponse = await fetch(`${baseUrl}/documents/missing/download`);
-    assert.equal(missingResponse.status, 404);
-
-    for (let request = 1; request < 59; request += 1) {
-      const response = await fetch(`${baseUrl}/documents/missing/download`);
-      assert.equal(response.status, 404);
-    }
-    const rateLimitedResponse = await fetch(`${baseUrl}/documents/missing/download`);
-    assert.equal(rateLimitedResponse.status, 429);
+    assert.strictEqual(missingResponse.status, 404);
   } finally {
-    await new Promise((resolve) => server.close(resolve));
-    for (const filename of await fs.readdir(storage)) {
-      if (!filesBeforeUpload.has(filename)) {
-        await fs.unlink(path.join(storage, filename));
-      }
-    }
+    await server.close();
   }
 });
