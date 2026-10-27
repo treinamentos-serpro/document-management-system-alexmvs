@@ -1,35 +1,58 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const DocumentRepository = require('../src/repositories/documentRepository');
-const DocumentService = require('../src/services/documentService');
+const { createDocumentService } = require('../src/services/document.service');
 
-test('o serviço cria e lista metadados sem expor o caminho local', () => {
-  const service = new DocumentService(new DocumentRepository());
+test('upload and list return public documents without storage names', async () => {
+  const storedDocuments = [];
+  const documentRepository = {
+    async save(document) {
+      storedDocuments.push(document);
+    },
+    async findByOwner() {
+      return storedDocuments;
+    },
+  };
+  const service = createDocumentService({
+    documentRepository,
+    fileRepository: { async remove() {} },
+  });
   const file = {
-    originalname: 'relatorio.pdf',
-    size: 42,
-    path: '/storage/generated-id',
+    originalname: 'relatorio.txt',
+    size: 4,
+    mimetype: 'text/plain',
+    filename: 'stored-file',
   };
 
-  const createdDocument = service.createDocument(file, 'user-1');
+  const uploadedDocument = await service.upload({ file, owner: 'usuario-a' });
+  const listedDocuments = await service.list('usuario-a');
 
-  assert.equal(createdDocument.originalName, 'relatorio.pdf');
-  assert.equal(createdDocument.size, 42);
-  assert.equal(createdDocument.owner, 'user-1');
-  assert.equal(typeof createdDocument.id, 'string');
-  assert.equal(Number.isNaN(Date.parse(createdDocument.uploadedAt)), false);
-  assert.equal(Object.hasOwn(createdDocument, 'path'), false);
-  assert.deepEqual(service.listDocuments(), [createdDocument]);
+  assert.strictEqual(Object.hasOwn(uploadedDocument, 'storageName'), false);
+  assert.strictEqual(Object.hasOwn(listedDocuments[0], 'storageName'), false);
+  assert.strictEqual(storedDocuments[0].storageName, 'stored-file');
 });
 
-test('o serviço busca um documento pelo identificador sem duplicar a persistência', () => {
-  const service = new DocumentService(new DocumentRepository());
-  const createdDocument = service.createDocument({
-    originalname: 'relatorio.pdf',
-    size: 42,
-    path: '/storage/generated-id',
-  }, 'user-1');
+test('upload removes the stored file when saving document metadata fails', async () => {
+  const saveError = new Error('Falha ao salvar metadados.');
+  const removedFiles = [];
+  const service = createDocumentService({
+    documentRepository: {
+      async save() {
+        throw saveError;
+      },
+    },
+    fileRepository: {
+      async remove(storageName) {
+        removedFiles.push(storageName);
+      },
+    },
+  });
 
-  assert.equal(service.getDocumentById(createdDocument.id).path, '/storage/generated-id');
-  assert.equal(service.getDocumentById('inexistente'), null);
+  await assert.rejects(
+    service.upload({
+      file: { originalname: 'relatorio.txt', size: 4, filename: 'stored-file' },
+      owner: 'usuario-a',
+    }),
+    saveError,
+  );
+  assert.deepStrictEqual(removedFiles, ['stored-file']);
 });
