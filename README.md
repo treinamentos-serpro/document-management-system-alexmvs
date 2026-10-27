@@ -1,46 +1,37 @@
-# Document Management System com GitHub Copilot
+<div align="center">
 
-<img src="https://octodex.github.com/images/Professortocat_v2.png" align="right" height="200px" />
+# 🎉 Congratulations Copilot! 🎉
 
-Hey alexmvs!
+<img src="https://octodex.github.com/images/welcometocat.png" height="200px" />
 
-Mona here. I'm done preparing your exercise. Hope you enjoy! 💚
+### 🌟 You've successfully completed the exercise! 🌟
 
-Remember, it's self-paced so feel free to take a break! ☕️
+## 🚀 Share Your Success!
 
-[![](https://img.shields.io/badge/Go%20to%20Exercise-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/treinamentos-serpro/document-management-system-alexmvs/issues/1)
+**Show off your new skills and inspire others!**
+
+<a href="https://twitter.com/intent/tweet?text=I%20just%20completed%20the%20%22Document%20Management%20System%20com%20GitHub%20Copilot%22%20GitHub%20Skills%20hands-on%20exercise!%20%F0%9F%8E%89%0A%0Ahttps%3A%2F%2Fgithub.com%2Ftreinamentos-serpro%2Fdocument-management-system-alexmvs%0A%0A%23GitHubSkills%20%23OpenSource%20%23GitHubLearn" target="_blank" rel="noopener noreferrer">
+  <img src="https://img.shields.io/badge/Share%20on%20X-1da1f2?style=for-the-badge&logo=x&logoColor=white" alt="Share on X" />
+</a>
+<a href="https://bsky.app/intent/compose?text=I%20just%20completed%20the%20%22Document%20Management%20System%20com%20GitHub%20Copilot%22%20GitHub%20Skills%20hands-on%20exercise!%20%F0%9F%8E%89%0A%0Ahttps%3A%2F%2Fgithub.com%2Ftreinamentos-serpro%2Fdocument-management-system-alexmvs%0A%0A%23GitHubSkills%20%23OpenSource%20%23GitHubLearn" target="_blank" rel="noopener noreferrer">
+  <img src="https://img.shields.io/badge/Share%20on%20Bluesky-0085ff?style=for-the-badge&logo=bluesky&logoColor=white" alt="Share on Bluesky" />
+</a>
+<a href="https://www.linkedin.com/feed/?shareActive=true&text=I%20just%20completed%20the%20%22Document%20Management%20System%20com%20GitHub%20Copilot%22%20GitHub%20Skills%20hands-on%20exercise!%20%F0%9F%8E%89%0A%0Ahttps%3A%2F%2Fgithub.com%2Ftreinamentos-serpro%2Fdocument-management-system-alexmvs%0A%0A%23GitHubSkills%20%23OpenSource%20%23GitHubLearn" target="_blank" rel="noopener noreferrer">
+  <img src="https://img.shields.io/badge/Share%20on%20LinkedIn-0077b5?style=for-the-badge&logo=linkedin&logoColor=white" alt="Share on LinkedIn" />
+</a>
+
+### 🎯 What's Next?
+
+**Keep the momentum going!**
+
+[![](https://img.shields.io/badge/Return%20to%20Exercise-%E2%86%92-1f883d?style=for-the-badge&logo=github&labelColor=197935)](https://github.com/treinamentos-serpro/document-management-system-alexmvs/issues/1)
+[![GitHub Skills](https://img.shields.io/badge/Explore%20GitHub%20Skills-000000?style=for-the-badge&logo=github&logoColor=white)](https://learn.github.com/skills)
+
+*There's no better way to learn than building things!* 🚀
+
+</div>
 
 ---
 
-## Executar a aplicação
-
-Com Node.js 24 ou superior, instale as dependências e inicie cada serviço em
-um terminal separado:
-
-```sh
-cd backend
-npm ci
-npm start
-```
-
-```sh
-cd frontend
-npm ci
-npm run dev
-```
-
-Abra `http://localhost:5173`. Informe o identificador do usuário, selecione um
-arquivo e clique em **Enviar documento**. A biblioteca é atualizada após o envio;
-o botão de download ao lado de cada documento baixa o arquivo original.
-
-O cliente em `frontend/src/services/documentService.js` utiliza `fetch` com o
-prefixo `/api`. O proxy do Vite encaminha essas chamadas ao backend em
-`http://localhost:3000`, removendo o prefixo. As três operações enviam o
-cabeçalho `X-User-Id`. Esse identificador separa bibliotecas, mas não substitui
-autenticação. Os arquivos ficam no armazenamento local e os metadados em memória
-são perdidos ao reiniciar o backend.
-
-Para validar o frontend, execute `npm test` e `npm run build` em `frontend`.
-Para validar o backend, execute `npm test` em `backend`.
-
 &copy; 2025 GitHub &bull; [Code of Conduct](https://www.contributor-covenant.org/version/2/1/code_of_conduct/code_of_conduct.md) &bull; [MIT License](https://gh.io/mit)
+
